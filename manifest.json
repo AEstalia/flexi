@@ -1,0 +1,18 @@
+{
+  "name": "Flexi",
+  "short_name": "Flexi",
+  "description": "Gamified fitness app for beginners",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f0c1e",
+  "theme_color": "#7c4dff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ]
+}
