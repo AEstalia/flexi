@@ -39,6 +39,65 @@
       width: 100%;
     }
 
+    /* ── LOADING SCREEN ── */
+    .app-loading {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+    }
+    .loading-logo { font-size: 68px; animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .loading-text { font-size: 34px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+    .loading-sub { font-size: 13px; color: var(--muted); }
+
+    /* ── AUTH SCREEN ── */
+    .auth-screen {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 28px;
+      width: 100%; max-width: 400px;
+      text-align: center;
+    }
+    .auth-logo { font-size: 54px; margin-bottom: 8px; }
+    .auth-title { font-size: 30px; font-weight: 900; }
+    .auth-tagline { font-size: 13px; color: var(--muted); margin: 4px 0 26px; }
+    .auth-tabs {
+      display: flex; background: var(--surface2); border-radius: 12px;
+      padding: 4px; margin-bottom: 22px; gap: 4px;
+    }
+    .auth-tab {
+      flex: 1; padding: 9px; border: none; background: none;
+      color: var(--muted); font-size: 14px; font-weight: 600;
+      border-radius: 9px; cursor: pointer; transition: all .2s;
+    }
+    .auth-tab.active { background: var(--accent); color: white; }
+    .auth-input {
+      width: 100%; background: var(--surface2); border: 2px solid var(--border);
+      border-radius: 12px; padding: 13px 16px; color: var(--text);
+      font-size: 15px; outline: none; margin-bottom: 11px; display: block;
+    }
+    .auth-input:focus { border-color: var(--accent); }
+    .auth-input::placeholder { color: var(--muted); }
+    .auth-submit {
+      width: 100%; background: linear-gradient(135deg, var(--accent), #6d28d9);
+      color: white; border: none; border-radius: 13px;
+      padding: 14px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 4px;
+    }
+    .auth-submit:active { opacity: .9; transform: scale(.98); }
+    .auth-err {
+      background: rgba(255,92,108,.15); border: 1px solid rgba(255,92,108,.35);
+      color: var(--red); border-radius: 10px; padding: 10px 14px;
+      font-size: 13px; margin-bottom: 12px; text-align: left;
+    }
+
     /* ── HEADER ── */
     .header {
       background: linear-gradient(135deg, #1e1640, #2a1f5a);
@@ -210,6 +269,7 @@
     .lb-name { font-size: 14px; font-weight: 700; }
     .lb-sub { font-size: 12px; color: var(--muted); }
     .lb-xp { font-size: 13px; font-weight: 800; color: #c4a0ff; }
+    .lb-loading { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; }
 
     /* ── PROFILE ── */
     .profile-hero {
@@ -223,6 +283,20 @@
     .profile-xp-wrap { background: rgba(255,255,255,.1); border-radius: 99px; height: 8px; margin: 14px 0 6px; }
     .profile-xp-fill { height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--accent), #c084fc); transition: width .5s; }
     .profile-xp-text { font-size: 12px; color: var(--muted); }
+
+    /* ── AVATAR PICKER ── */
+    .avi-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-bottom: 16px;
+    }
+    .avi-btn {
+      width: 44px; height: 44px; border-radius: 12px; border: 2px solid var(--border);
+      background: var(--surface2); font-size: 22px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .avi-btn:active { transform: scale(.9); }
+    .avi-btn.selected { border-color: var(--accent); background: rgba(124,77,255,.2); }
 
     /* ── BADGES ── */
     .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -240,6 +314,15 @@
     .hist-name { font-size: 14px; font-weight: 700; }
     .hist-date { font-size: 12px; color: var(--muted); }
     .hist-xp { font-size: 13px; font-weight: 800; color: #c4a0ff; }
+
+    /* ── LOGOUT BTN ── */
+    .logout-btn {
+      width: 100%; background: none; border: 2px solid var(--border);
+      color: var(--red); border-radius: 12px; padding: 12px;
+      font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px;
+      transition: all .2s;
+    }
+    .logout-btn:active { background: rgba(255,92,108,.1); }
 
     /* ── WORKOUT SESSION MODAL ── */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 400; align-items: flex-end; justify-content: center; }
@@ -330,6 +413,43 @@
 </head>
 <body>
 
+<!-- LOADING SCREEN -->
+<div class="app-loading" id="app-loading">
+  <div class="loading-logo">💪</div>
+  <div class="loading-text">Flexi</div>
+  <div class="loading-sub">Loading your journey...</div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">💪</div>
+    <div class="auth-title">Flexi</div>
+    <div class="auth-tagline">Your gamified fitness journey</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthMode('login')">Sign In</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthMode('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="form-login">
+      <input class="auth-input" type="email" id="login-email" placeholder="Email address" autocomplete="email" />
+      <input class="auth-input" type="password" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')signIn()" />
+      <div class="auth-err" id="login-error" style="display:none"></div>
+      <button class="auth-submit" onclick="signIn()">Sign In →</button>
+    </div>
+
+    <!-- Sign up form -->
+    <div id="form-signup" style="display:none">
+      <input class="auth-input" type="text" id="signup-name" placeholder="Your display name" autocomplete="name" />
+      <input class="auth-input" type="email" id="signup-email" placeholder="Email address" autocomplete="email" />
+      <input class="auth-input" type="password" id="signup-password" placeholder="Password (min. 6 characters)" autocomplete="new-password" onkeydown="if(event.key==='Enter')signUp()" />
+      <div class="auth-err" id="signup-error" style="display:none"></div>
+      <button class="auth-submit" onclick="signUp()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
 <!-- XP TOAST -->
 <div class="xp-toast" id="xp-toast"></div>
 
@@ -338,7 +458,7 @@
   <div class="header-row">
     <div>
       <div class="header-greeting" id="hdr-greeting">Good morning</div>
-      <div class="header-name" id="hdr-name">Alex 👋</div>
+      <div class="header-name" id="hdr-name">Loading... 👋</div>
     </div>
     <div class="header-badges">
       <div class="badge-pill badge-streak" id="hdr-streak">🔥 0</div>
@@ -409,9 +529,9 @@
   <div class="card" style="margin-top:6px">
     <div class="section-header">
       <span class="section-title">Top Performers</span>
-      <span style="font-size:12px;color:var(--muted)">This week</span>
+      <span style="font-size:12px;color:var(--muted)" id="lb-subtitle">Global</span>
     </div>
-    <div id="leaderboard"></div>
+    <div id="leaderboard"><div class="lb-loading">⏳ Loading...</div></div>
   </div>
 </div>
 
@@ -419,7 +539,7 @@
 <div class="main page" id="page-profile">
   <div class="profile-hero">
     <div class="profile-avi" id="prof-avi">😎</div>
-    <div class="profile-name" id="prof-name">Alex</div>
+    <div class="profile-name" id="prof-name">—</div>
     <div class="profile-sub" id="prof-sub">Level 1 · Rookie</div>
     <div class="profile-xp-wrap"><div class="profile-xp-fill" id="prof-xp-fill" style="width:0%"></div></div>
     <div class="profile-xp-text" id="prof-xp-text">0 / 200 XP to Level 2</div>
@@ -437,10 +557,13 @@
 
   <div class="card">
     <div class="card-title">Settings</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Choose your avatar</p>
+    <div class="avi-grid" id="avi-grid"></div>
     <div class="settings-row">
-      <input class="name-input" id="name-input" type="text" placeholder="Your name" />
+      <input class="name-input" id="name-input" type="text" placeholder="Your display name" />
       <button class="save-btn" onclick="saveName()">Save</button>
     </div>
+    <button class="logout-btn" onclick="signOutUser()">Sign Out</button>
   </div>
 </div>
 
@@ -478,7 +601,27 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script>
+// ── FIREBASE CONFIG ──
+const firebaseConfig = {
+  apiKey:            "AIzaSyD2Cah6XB-QZMRInzJiVX1zNmqG19bpLks",
+  authDomain:        "flexi-app-75749.firebaseapp.com",
+  projectId:         "flexi-app-75749",
+  storageBucket:     "flexi-app-75749.firebasestorage.app",
+  messagingSenderId: "709192922401",
+  appId:             "1:709192922401:web:7d48b01aae7a57f0587a60"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+// Enable offline persistence so the app still works without internet
+db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+
 // ── WORKOUT CATALOG ──
 const WORKOUTS = [
   {
@@ -494,28 +637,28 @@ const WORKOUTS = [
   {
     id: 'cardio-blast', name: 'Cardio Blast', category: 'cardio', duration: 15, xp: 80,
     exercises: [
-      { name: 'Jumping Jacks',    icon: '⭐', sets: 3, reps: 30, type: 'reps' },
-      { name: 'High Knees',       icon: '🦵', sets: 3, reps: 30, type: 'timed' },
-      { name: 'Burpees',          icon: '🔥', sets: 3, reps: 8,  type: 'reps' },
-      { name: 'Mountain Climbers',icon: '🧗', sets: 3, reps: 20, type: 'reps' },
+      { name: 'Jumping Jacks',     icon: '⭐', sets: 3, reps: 30, type: 'reps' },
+      { name: 'High Knees',        icon: '🦵', sets: 3, reps: 30, type: 'timed' },
+      { name: 'Burpees',           icon: '🔥', sets: 3, reps: 8,  type: 'reps' },
+      { name: 'Mountain Climbers', icon: '🧗', sets: 3, reps: 20, type: 'reps' },
     ]
   },
   {
     id: 'core-crusher', name: 'Core Crusher', category: 'strength', duration: 15, xp: 80,
     exercises: [
-      { name: 'Crunches',         icon: '🧘', sets: 3, reps: 20, type: 'reps' },
-      { name: 'Bicycle Crunches', icon: '🚴', sets: 3, reps: 20, type: 'reps' },
-      { name: 'Russian Twists',   icon: '🔄', sets: 3, reps: 20, type: 'reps' },
-      { name: 'Leg Raises',       icon: '🦵', sets: 3, reps: 15, type: 'reps' },
+      { name: 'Crunches',          icon: '🧘', sets: 3, reps: 20, type: 'reps' },
+      { name: 'Bicycle Crunches',  icon: '🚴', sets: 3, reps: 20, type: 'reps' },
+      { name: 'Russian Twists',    icon: '🔄', sets: 3, reps: 20, type: 'reps' },
+      { name: 'Leg Raises',        icon: '🦵', sets: 3, reps: 15, type: 'reps' },
     ]
   },
   {
     id: 'full-body-hiit', name: 'Full Body HIIT', category: 'hiit', duration: 25, xp: 150,
     exercises: [
-      { name: 'Box Jumps',        icon: '📦', sets: 4, reps: 10, type: 'reps' },
-      { name: 'Push-ups',         icon: '🤸', sets: 4, reps: 15, type: 'reps' },
-      { name: 'Sprint Intervals', icon: '🏃', sets: 5, reps: 30, type: 'timed' },
-      { name: 'Kettlebell Swings',icon: '⚙️', sets: 4, reps: 15, type: 'reps' },
+      { name: 'Box Jumps',          icon: '📦', sets: 4, reps: 10, type: 'reps' },
+      { name: 'Push-ups',           icon: '🤸', sets: 4, reps: 15, type: 'reps' },
+      { name: 'Sprint Intervals',   icon: '🏃', sets: 5, reps: 30, type: 'timed' },
+      { name: 'Kettlebell Swings',  icon: '⚙️', sets: 4, reps: 15, type: 'reps' },
     ]
   },
   {
@@ -542,32 +685,165 @@ const ACHIEVEMENTS = [
 ];
 
 const LEVEL_TITLES = ['Rookie','Beginner','Trainee','Intermediate','Advanced','Expert','Elite','Champion','Legend','Master'];
-const LEADERBOARD_NPC = [
-  { name: 'Jordan K.', avatar: '🦁', xp: 4800 },
-  { name: 'Sam W.',    avatar: '🐯', xp: 3950 },
-  { name: 'Riley M.',  avatar: '🦊', xp: 3200 },
-  { name: 'Casey P.',  avatar: '🐺', xp: 2700 },
-  { name: 'Taylor B.', avatar: '🦅', xp: 2100 },
-];
+const AVATARS = ['😎','🦁','🐯','🦊','🐺','🦅','🏋️','🧗','🤸','🦾','🔥','⚡','🌟','🏆','💪','🎯','🥷','🤖','👾','🐉'];
 const EX_COLORS = ['c-orange','c-green','c-purple','c-blue','c-red'];
-const EX_GOALS = { 'Push-ups':300,'Squats':450,'Plank':270,'Burpees':120,'Lunges':360,'Crunches':300,'Jumping Jacks':450,'High Knees':270,'Mountain Climbers':300,'Bicycle Crunches':300,'Russian Twists':300,'Leg Raises':225,'Box Jumps':160,'Sprint Intervals':300,'Kettlebell Swings':240,'Dumbbell Rows':240,'Hip Flexor Stretch':120,'Hamstring Stretch':120,'Shoulder Stretch':120,'Spine Rotation':60,'Pigeon Pose':120 };
+const EX_GOALS  = { 'Push-ups':300,'Squats':450,'Plank':270,'Burpees':120,'Lunges':360,'Crunches':300,'Jumping Jacks':450,'High Knees':270,'Mountain Climbers':300,'Bicycle Crunches':300,'Russian Twists':300,'Leg Raises':225,'Box Jumps':160,'Sprint Intervals':300,'Kettlebell Swings':240,'Dumbbell Rows':240,'Hip Flexor Stretch':120,'Hamstring Stretch':120,'Shoulder Stretch':120,'Spine Rotation':60,'Pigeon Pose':120 };
 
 // ── STATE ──
-let state = JSON.parse(localStorage.getItem('flexi') || 'null') || {
-  name: 'Alex', xp: 0, streak: 0, lastWorkoutDate: null,
-  log: [], exerciseStats: {}, achievements: [],
-};
-let wFilter = 'all';
-let session = null;
+const DEFAULT_STATE = () => ({
+  name: '', avatar: '😎', xp: 0, streak: 0,
+  lastWorkoutDate: null, log: [], exerciseStats: {}, achievements: []
+});
 
-function save() { localStorage.setItem('flexi', JSON.stringify(state)); }
+let state       = DEFAULT_STATE();
+let currentUser = null;
+let wFilter     = 'all';
+let session     = null;
+let lbCache     = null;
+let lbCacheTime = 0;
+
+// ── PERSIST ──
+function localKey() { return currentUser ? 'flexi-' + currentUser.uid : null; }
+
+function save() {
+  const key = localKey();
+  if (key) localStorage.setItem(key, JSON.stringify(state));
+  if (currentUser) {
+    db.collection('users').doc(currentUser.uid).set({
+      name:            state.name,
+      avatar:          state.avatar || '😎',
+      xp:              state.xp,
+      streak:          state.streak,
+      lastWorkoutDate: state.lastWorkoutDate,
+      log:             state.log,
+      exerciseStats:   state.exerciseStats,
+      achievements:    state.achievements,
+      email:           currentUser.email,
+      updatedAt:       firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(e => console.error('Firestore save failed:', e));
+  }
+}
+
+// ── AUTH UI ──
+function switchAuthMode(mode) {
+  const isLogin = mode === 'login';
+  document.getElementById('form-login').style.display  = isLogin ? '' : 'none';
+  document.getElementById('form-signup').style.display = isLogin ? 'none' : '';
+  document.getElementById('tab-login').classList.toggle('active', isLogin);
+  document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+  document.getElementById('login-error').style.display  = 'none';
+  document.getElementById('signup-error').style.display = 'none';
+}
+
+function showAuthError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = '';
+}
+
+async function signIn() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  document.getElementById('login-error').style.display = 'none';
+  if (!email || !password) { showAuthError('login-error', 'Please fill in all fields.'); return; }
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (err) {
+    const msgs = {
+      'auth/user-not-found':  'No account with that email.',
+      'auth/wrong-password':  'Incorrect password.',
+      'auth/invalid-email':   'Invalid email address.',
+      'auth/too-many-requests': 'Too many attempts — try again later.',
+    };
+    showAuthError('login-error', msgs[err.code] || err.message);
+  }
+}
+
+async function signUp() {
+  const name     = document.getElementById('signup-name').value.trim();
+  const email    = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  document.getElementById('signup-error').style.display = 'none';
+  if (!name)     { showAuthError('signup-error', 'Please enter your display name.'); return; }
+  if (!email)    { showAuthError('signup-error', 'Please enter your email.'); return; }
+  if (password.length < 6) { showAuthError('signup-error', 'Password must be at least 6 characters.'); return; }
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    state = { ...DEFAULT_STATE(), name };
+    // Create Firestore doc immediately so they appear on the leaderboard
+    await db.collection('users').doc(cred.user.uid).set({
+      name, avatar: '😎', xp: 0, streak: 0,
+      lastWorkoutDate: null, log: [], exerciseStats: {}, achievements: [],
+      email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // onAuthStateChanged fires next and shows the app
+  } catch (err) {
+    const msgs = {
+      'auth/email-already-in-use': 'An account with this email already exists.',
+      'auth/invalid-email':        'Invalid email address.',
+      'auth/weak-password':        'Password is too weak.',
+    };
+    showAuthError('signup-error', msgs[err.code] || err.message);
+  }
+}
+
+async function signOutUser() {
+  if (!confirm('Sign out of Flexi?')) return;
+  await auth.signOut();
+  const key = localKey();
+  if (key) localStorage.removeItem(key);
+  state       = DEFAULT_STATE();
+  currentUser = null;
+  lbCache     = null;
+}
+
+// ── AUTH STATE LISTENER ──
+auth.onAuthStateChanged(async user => {
+  document.getElementById('app-loading').style.display = 'none';
+  if (user) {
+    currentUser = user;
+    // Show cached data immediately so the UI isn't blank
+    const cached = localStorage.getItem('flexi-' + user.uid);
+    if (cached) {
+      try { state = JSON.parse(cached); } catch(e) { state = DEFAULT_STATE(); }
+    }
+    document.getElementById('auth-screen').style.display = 'none';
+    renderAll();
+    // Then load fresh data from Firestore
+    try {
+      const doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        const d = doc.data();
+        state = {
+          name:            d.name            || '',
+          avatar:          d.avatar          || '😎',
+          xp:              d.xp              || 0,
+          streak:          d.streak          || 0,
+          lastWorkoutDate: d.lastWorkoutDate || null,
+          log:             d.log             || [],
+          exerciseStats:   d.exerciseStats   || {},
+          achievements:    d.achievements    || [],
+        };
+        localStorage.setItem('flexi-' + user.uid, JSON.stringify(state));
+        renderAll();
+      }
+    } catch(e) {
+      console.error('Firestore load failed:', e);
+    }
+  } else {
+    currentUser = null;
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+});
 
 // ── XP / LEVEL ──
-function xpForLevel(lvl) { return lvl * 200; }
+function xpForLevel(lvl)      { return lvl * 200; }
 function totalXpForLevel(lvl) { let t = 0; for (let i = 1; i < lvl; i++) t += xpForLevel(i); return t; }
-function levelFromXp(xp) { let l = 1; while (xp >= totalXpForLevel(l + 1)) l++; return l; }
-function xpInLevel(xp) { const l = levelFromXp(xp); return xp - totalXpForLevel(l); }
-function getLvTitle(l) { return LEVEL_TITLES[Math.min(l - 1, LEVEL_TITLES.length - 1)]; }
+function levelFromXp(xp)      { let l = 1; while (xp >= totalXpForLevel(l + 1)) l++; return l; }
+function xpInLevel(xp)        { const l = levelFromXp(xp); return xp - totalXpForLevel(l); }
+function getLvTitle(l)         { return LEVEL_TITLES[Math.min(l - 1, LEVEL_TITLES.length - 1)]; }
 
 function addXp(amount) {
   const old = levelFromXp(state.xp);
@@ -587,7 +863,7 @@ function showToast(msg) {
 
 function showLevelUp(lvl) {
   document.getElementById('lu-title').textContent = 'Level Up! 🎉';
-  document.getElementById('lu-sub').textContent = 'You reached Level ' + lvl + ' — ' + getLvTitle(lvl) + '!';
+  document.getElementById('lu-sub').textContent   = 'You reached Level ' + lvl + ' — ' + getLvTitle(lvl) + '!';
   document.getElementById('levelup-overlay').classList.add('open');
 }
 function closeLevelUp() {
@@ -597,17 +873,17 @@ function closeLevelUp() {
 
 // ── STREAK ──
 function updateStreak() {
-  const today = new Date().toISOString().split('T')[0];
+  const today     = new Date().toISOString().split('T')[0];
   if (state.lastWorkoutDate === today) return;
   const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-  state.streak = state.lastWorkoutDate === yesterday ? state.streak + 1 : 1;
+  state.streak    = state.lastWorkoutDate === yesterday ? state.streak + 1 : 1;
   state.lastWorkoutDate = today;
   save();
 }
 
 // ── ACHIEVEMENTS ──
 function checkAchievements() {
-  const set = new Set(state.achievements);
+  const set  = new Set(state.achievements);
   const earn = id => { if (!set.has(id)) { set.add(id); state.achievements = [...set]; save(); } };
   if (state.log.length >= 1)  earn('first-workout');
   if (state.streak >= 3)      earn('streak-3');
@@ -645,17 +921,14 @@ function renderSession() {
   if (!session) return;
   const { workout, exIdx, setIdx, resting } = session;
   document.getElementById('session-wname').textContent = workout.name;
-
-  // pips
   document.getElementById('session-pips').innerHTML =
     workout.exercises.map((_, i) =>
       `<div class="pip${i < exIdx ? ' done' : i === exIdx ? ' cur' : ''}"></div>`
     ).join('');
-
   if (resting) {
     renderRest();
   } else {
-    const ex = workout.exercises[exIdx];
+    const ex     = workout.exercises[exIdx];
     const detail = ex.type === 'timed'
       ? `Set ${setIdx + 1} of ${ex.sets} · Hold ${ex.reps}s`
       : `Set ${setIdx + 1} of ${ex.sets} · ${ex.reps} reps`;
@@ -726,8 +999,8 @@ function completeExercise() {
 function skipExercise() {
   clearInterval(session.iv);
   session.exIdx++;
-  session.setIdx = 0;
-  session.resting = false;
+  session.setIdx   = 0;
+  session.resting  = false;
   if (session.exIdx >= session.workout.exercises.length) finishWorkout();
   else renderSession();
 }
@@ -741,6 +1014,7 @@ function finishWorkout() {
   updateStreak();
   addXp(session.workout.xp);
   checkAchievements();
+  lbCache = null; // invalidate leaderboard cache so it reloads with new XP
   session = null;
   renderAll();
 }
@@ -759,6 +1033,13 @@ function filterWorkouts(cat, btn) {
   renderWorkouts();
 }
 
+// ── AVATAR ──
+function setAvatar(emoji) {
+  state.avatar = emoji;
+  save();
+  renderProfile();
+}
+
 // ── RENDER ──
 function renderAll() {
   renderHeader(); renderHome(); renderWorkouts(); renderProgress(); renderProfile();
@@ -767,57 +1048,55 @@ function renderAll() {
 function renderHeader() {
   const h = new Date().getHours();
   document.getElementById('hdr-greeting').textContent = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  document.getElementById('hdr-name').textContent = (state.name || 'Alex') + ' 👋';
-  document.getElementById('hdr-streak').textContent = '🔥 ' + state.streak;
-  document.getElementById('hdr-xp').textContent = '⚡ ' + state.xp;
+  document.getElementById('hdr-name').textContent    = (state.name || 'Athlete') + ' 👋';
+  document.getElementById('hdr-streak').textContent  = '🔥 ' + state.streak;
+  document.getElementById('hdr-xp').textContent      = '⚡ ' + state.xp;
 }
 
 function renderHome() {
-  const lvl = levelFromXp(state.xp);
+  const lvl   = levelFromXp(state.xp);
   const inLvl = xpInLevel(state.xp);
-  const forLvl = xpForLevel(lvl);
-  const pct = Math.min(Math.round(inLvl / forLvl * 100), 100);
-  document.getElementById('lv-badge').textContent = 'Level ' + lvl;
-  document.getElementById('lv-xp-text').textContent = inLvl + ' / ' + forLvl + ' XP';
-  document.getElementById('lv-bar').style.width = pct + '%';
+  const forLvl= xpForLevel(lvl);
+  const pct   = Math.min(Math.round(inLvl / forLvl * 100), 100);
+  document.getElementById('lv-badge').textContent    = 'Level ' + lvl;
+  document.getElementById('lv-xp-text').textContent  = inLvl + ' / ' + forLvl + ' XP';
+  document.getElementById('lv-bar').style.width      = pct + '%';
 
   const tw = WORKOUTS[new Date().getDay() % WORKOUTS.length];
-  document.getElementById('today-name').textContent = tw.name;
-  document.getElementById('today-time').textContent = '⏱ ' + tw.duration + ' min';
+  document.getElementById('today-name').textContent      = tw.name;
+  document.getElementById('today-time').textContent      = '⏱ ' + tw.duration + ' min';
   document.getElementById('today-exercises').textContent = '🏋️ ' + tw.exercises.length + ' exercises';
-  document.getElementById('today-xp').textContent = '⚡ ' + tw.xp + ' XP';
+  document.getElementById('today-xp').textContent        = '⚡ ' + tw.xp + ' XP';
 
-  // Activity chart
   const today = new Date();
-  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const days  = ['Su','Mo','Tu','We','Th','Fr','Sa'];
   let chart = '', dayLabels = '';
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(today); d.setDate(today.getDate() - i);
+    const d  = new Date(today); d.setDate(today.getDate() - i);
     const ds = d.toISOString().split('T')[0];
-    const has = state.log.some(l => l.date === ds);
+    const has     = state.log.some(l => l.date === ds);
     const isToday = i === 0;
-    const h = has ? 60 : 10;
+    const h2  = has ? 60 : 10;
     const cls = has ? (isToday ? 'act-bar today' : 'act-bar done') : 'act-bar';
-    chart += `<div class="act-col"><div class="${cls}" style="height:${h}px"></div></div>`;
-    dayLabels += `<span style="font-size:10px;color:${isToday ? 'var(--accent)' : 'var(--muted)'};font-weight:${isToday ? 700 : 400}">${days[d.getDay()]}</span>`;
+    chart    += `<div class="act-col"><div class="${cls}" style="height:${h2}px"></div></div>`;
+    dayLabels+= `<span style="font-size:10px;color:${isToday ? 'var(--accent)' : 'var(--muted)'};font-weight:${isToday ? 700 : 400}">${days[d.getDay()]}</span>`;
   }
   document.getElementById('activity-chart').innerHTML = chart;
-  document.getElementById('activity-days').innerHTML = dayLabels;
+  document.getElementById('activity-days').innerHTML  = dayLabels;
 
-  // Top exercises
-  const exEl = document.getElementById('home-top-ex');
-  const allEx = WORKOUTS.flatMap(w => w.exercises);
-  const topEx = Object.entries(state.exerciseStats).sort((a,b) => b[1].reps - a[1].reps).slice(0,3);
-  const defaults = [{ name:'Push-ups',icon:'🤸' },{ name:'Squats',icon:'🦵' },{ name:'Plank',icon:'🏋️' }];
-  const display = topEx.length ? topEx.map(([n,s]) => ({ name:n, icon: allEx.find(e=>e.name===n)?.icon||'🏋️', reps:s.reps })) : defaults.map(d => ({ ...d, reps:0 }));
-  const maxReps = Math.max(...display.map(d => d.reps), 1);
-  exEl.innerHTML = display.map((d, i) => {
-    const pct = Math.round(d.reps / Math.max(EX_GOALS[d.name]||100, 1) * 100);
+  const allEx   = WORKOUTS.flatMap(w => w.exercises);
+  const topEx   = Object.entries(state.exerciseStats).sort((a,b) => b[1].reps - a[1].reps).slice(0,3);
+  const defaults= [{ name:'Push-ups',icon:'🤸' },{ name:'Squats',icon:'🦵' },{ name:'Plank',icon:'🏋️' }];
+  const display = topEx.length
+    ? topEx.map(([n,s]) => ({ name:n, icon: allEx.find(e=>e.name===n)?.icon||'🏋️', reps:s.reps }))
+    : defaults.map(d => ({ ...d, reps:0 }));
+  document.getElementById('home-top-ex').innerHTML = display.map((d, i) => {
+    const pct2 = Math.round(d.reps / Math.max(EX_GOALS[d.name]||100, 1) * 100);
     return `<div class="ex-card ${EX_COLORS[i]}">
       <div>
         <div class="ex-card-name">${d.name}</div>
-        <div class="ex-card-pct">${pct}%</div>
-        <div class="ex-bar-wrap"><div class="ex-bar" style="width:${Math.min(pct,100)}%"></div></div>
+        <div class="ex-card-pct">${pct2}%</div>
+        <div class="ex-bar-wrap"><div class="ex-bar" style="width:${Math.min(pct2,100)}%"></div></div>
       </div>
       <div style="font-size:34px">${d.icon}</div>
     </div>`;
@@ -840,17 +1119,15 @@ function renderWorkouts() {
 }
 
 function renderProgress() {
-  document.getElementById('p-streak').textContent = state.streak;
+  document.getElementById('p-streak').textContent   = state.streak;
   document.getElementById('p-workouts').textContent = state.log.length;
-  document.getElementById('p-xp').textContent = state.xp;
+  document.getElementById('p-xp').textContent       = state.xp;
 
-  // Exercise progress bars
   const allEx = WORKOUTS.flatMap(w => w.exercises).filter((e,i,a) => a.findIndex(x=>x.name===e.name)===i);
-  const exEl = document.getElementById('ex-progress-list');
-  exEl.innerHTML = allEx.slice(0,6).map((ex, i) => {
+  document.getElementById('ex-progress-list').innerHTML = allEx.slice(0,6).map((ex, i) => {
     const stats = state.exerciseStats[ex.name] || { reps: 0 };
-    const goal = EX_GOALS[ex.name] || 100;
-    const pct = Math.min(Math.round(stats.reps / goal * 100), 100);
+    const goal  = EX_GOALS[ex.name] || 100;
+    const pct   = Math.min(Math.round(stats.reps / goal * 100), 100);
     return `<div class="ex-card ${EX_COLORS[i % EX_COLORS.length]}" style="margin-bottom:10px">
       <div>
         <div class="ex-card-name">${ex.name}</div>
@@ -861,38 +1138,74 @@ function renderProgress() {
     </div>`;
   }).join('');
 
-  // Leaderboard
-  const me = { name: (state.name || 'You') + ' (You)', avatar: '😎', xp: state.xp, isMe: true };
-  const combined = [...LEADERBOARD_NPC, me].sort((a,b) => b.xp - a.xp);
-  const bgCols = ['rgba(255,215,0,.15)','rgba(192,192,192,.12)','rgba(205,127,50,.12)','rgba(79,142,247,.1)','rgba(124,77,255,.1)','rgba(16,217,160,.1)'];
-  document.getElementById('leaderboard').innerHTML = combined.slice(0,6).map((p, i) => {
+  renderLeaderboard();
+}
+
+async function renderLeaderboard() {
+  const lbEl = document.getElementById('leaderboard');
+  lbEl.innerHTML = '<div class="lb-loading">⏳ Loading...</div>';
+
+  try {
+    const now = Date.now();
+    if (!lbCache || now - lbCacheTime > 5 * 60 * 1000) {
+      const snap = await db.collection('users').orderBy('xp', 'desc').limit(10).get();
+      lbCache     = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+      lbCacheTime = now;
+    }
+
+    if (!lbCache.length) {
+      lbEl.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div><p>No players yet — be the first!</p></div>';
+      return;
+    }
+
     const medals = ['🥇','🥈','🥉'];
-    const rank = i < 3 ? medals[i] : (i + 1);
-    const lvl = levelFromXp(p.xp);
-    return `<div class="lb-row ${p.isMe ? 'lb-me' : ''}" style="${p.isMe ? '' : 'background:' + bgCols[i] + ';border-radius:10px;padding:8px 6px;margin:2px -6px;border-bottom:none'}">
-      <div class="lb-rank">${rank}</div>
-      <div class="lb-avatar" style="background:var(--surface2)">${p.avatar}</div>
-      <div class="lb-info">
-        <div class="lb-name">${p.name}</div>
-        <div class="lb-sub">Level ${lvl} · ${getLvTitle(lvl)}</div>
-      </div>
-      <div class="lb-xp">${p.xp} XP</div>
-    </div>`;
-  }).join('');
+    const bgCols = ['rgba(255,215,0,.15)','rgba(192,192,192,.12)','rgba(205,127,50,.12)','rgba(79,142,247,.1)','rgba(124,77,255,.1)','rgba(16,217,160,.1)'];
+
+    lbEl.innerHTML = lbCache.map((p, i) => {
+      const isMe  = currentUser && p.uid === currentUser.uid;
+      const rank  = i < 3 ? medals[i] : (i + 1);
+      const lvl   = levelFromXp(p.xp || 0);
+      const name  = (p.name || 'Unknown') + (isMe ? ' (You)' : '');
+      const avi   = p.avatar || '😎';
+      const bg    = isMe ? '' : `background:${bgCols[i]};border-radius:10px;padding:8px 6px;margin:2px -6px;border-bottom:none`;
+      return `<div class="lb-row ${isMe ? 'lb-me' : ''}" style="${bg}">
+        <div class="lb-rank">${rank}</div>
+        <div class="lb-avatar" style="background:var(--surface2)">${avi}</div>
+        <div class="lb-info">
+          <div class="lb-name">${name}</div>
+          <div class="lb-sub">Level ${lvl} · ${getLvTitle(lvl)}</div>
+        </div>
+        <div class="lb-xp">${p.xp || 0} XP</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('lb-subtitle').textContent = lbCache.length + ' players';
+  } catch(e) {
+    console.error('Leaderboard load failed:', e);
+    lbEl.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Could not load leaderboard.<br><span style="font-size:11px">Check your connection.</span></p></div>';
+  }
 }
 
 function renderProfile() {
-  const lvl = levelFromXp(state.xp);
+  const lvl   = levelFromXp(state.xp);
   const inLvl = xpInLevel(state.xp);
-  const forLvl = xpForLevel(lvl);
-  const pct = Math.min(Math.round(inLvl / forLvl * 100), 100);
-  document.getElementById('prof-avi').textContent = '😎';
-  document.getElementById('prof-name').textContent = state.name || 'Alex';
-  document.getElementById('prof-sub').textContent = `Level ${lvl} · ${getLvTitle(lvl)}`;
-  document.getElementById('prof-xp-fill').style.width = pct + '%';
-  document.getElementById('prof-xp-text').textContent = `${inLvl} / ${forLvl} XP to Level ${lvl + 1}`;
-  document.getElementById('name-input').value = state.name || '';
+  const forLvl= xpForLevel(lvl);
+  const pct   = Math.min(Math.round(inLvl / forLvl * 100), 100);
+  const avi   = state.avatar || '😎';
 
+  document.getElementById('prof-avi').textContent         = avi;
+  document.getElementById('prof-name').textContent        = state.name || 'Athlete';
+  document.getElementById('prof-sub').textContent         = `Level ${lvl} · ${getLvTitle(lvl)}`;
+  document.getElementById('prof-xp-fill').style.width     = pct + '%';
+  document.getElementById('prof-xp-text').textContent     = `${inLvl} / ${forLvl} XP to Level ${lvl + 1}`;
+  document.getElementById('name-input').value             = state.name || '';
+
+  // Avatar picker
+  document.getElementById('avi-grid').innerHTML = AVATARS.map(a =>
+    `<button class="avi-btn${a === avi ? ' selected' : ''}" onclick="setAvatar('${a}')">${a}</button>`
+  ).join('');
+
+  // Achievements
   const earned = new Set(state.achievements);
   document.getElementById('badges-grid').innerHTML = ACHIEVEMENTS.map(a => `
     <div class="badge-item">
@@ -900,6 +1213,7 @@ function renderProfile() {
       <div class="badge-name">${a.name}</div>
     </div>`).join('');
 
+  // Workout history
   const histEl = document.getElementById('hist-list');
   if (!state.log.length) {
     histEl.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>No workouts yet — start one!</p></div>';
@@ -918,11 +1232,14 @@ function renderProfile() {
 
 function saveName() {
   const v = document.getElementById('name-input').value.trim();
-  if (v) { state.name = v; save(); renderAll(); showToast('Name saved!'); }
+  if (v) {
+    state.name = v;
+    save();
+    lbCache = null; // refresh leaderboard with new name
+    renderAll();
+    showToast('Name saved!');
+  }
 }
-
-// ── INIT ──
-renderAll();
 </script>
 <script>
   if ('serviceWorker' in navigator) {
