@@ -417,7 +417,7 @@
 <div class="app-loading" id="app-loading">
   <div class="loading-logo">💪</div>
   <div class="loading-text">Flexi</div>
-  <div class="loading-sub">Loading your journey...</div>
+  <div class="loading-sub" id="loading-sub">Connecting to Firebase...</div>
 </div>
 
 <!-- AUTH SCREEN -->
@@ -800,7 +800,26 @@ async function signOutUser() {
 }
 
 // ── AUTH STATE LISTENER ──
+// If Firebase doesn't respond in 8 seconds, show a clear error
+const _authTimeout = setTimeout(() => {
+  document.getElementById('app-loading').innerHTML = `
+    <div style="max-width:320px;text-align:center;padding:24px">
+      <div style="font-size:48px;margin-bottom:14px">⚠️</div>
+      <div style="font-size:20px;font-weight:900;color:#ff5c6c;margin-bottom:10px">Cannot connect to Firebase</div>
+      <div style="color:var(--muted);line-height:1.6;font-size:13px;margin-bottom:20px">
+        This usually means:<br><br>
+        1. <b style="color:var(--text)">Authentication is not enabled</b> in the Firebase console<br><br>
+        2. The domain is not on Firebase's <b style="color:var(--text)">authorized list</b><br><br>
+        3. No internet connection
+      </div>
+      <button onclick="location.reload()" style="background:var(--accent);color:white;border:none;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer">
+        Retry
+      </button>
+    </div>`;
+}, 8000);
+
 auth.onAuthStateChanged(async user => {
+  clearTimeout(_authTimeout);
   document.getElementById('app-loading').style.display = 'none';
   if (user) {
     currentUser = user;
